@@ -3,6 +3,9 @@ import tesoro from '../../adicionales/tesoro.jpg';
 import { Container, Segment, Button } from 'semantic-ui-react'; 
 import { Link } from 'react-router-dom';
 
+/**
+ * Funcion que almacena la página que notifica al usuario que se ha podido recuperar su cuenta.
+ */
 const Recuperado: React.FC<{}> = () => {
 
     return(

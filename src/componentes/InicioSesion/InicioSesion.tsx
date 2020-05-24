@@ -5,7 +5,11 @@ import axios from 'axios';
 import { Modal } from 'react-bootstrap'; 
 import { ToastContainer, toast, Zoom, Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import PropTypes from 'prop-types';
 
+/**
+ * Funcion que almacena la página de inicio de sesión a la aplicación.
+ */
 const InicioSesion: React.FC<{}> = () => {
 
     const [Authorization, setAuthorizarion] = useState('');
@@ -32,7 +36,6 @@ const InicioSesion: React.FC<{}> = () => {
         .then(res => {
             console.log(res);
             console.log(res.data.Authorization);
-
             setAuthorizarion(res.data.Authorization);
             setLog(false);        
             handleOpen();
@@ -100,3 +103,45 @@ const InicioSesion: React.FC<{}> = () => {
 }
 
 export default InicioSesion;
+
+InicioSesion.propTypes = {
+    /**
+     * Variable que almacena el token a usar para realizar las acciones una vez iniciado sesión.
+     * Este valor inicia vacío, pero se llena en la línea 39, cuando se hace la petición de iniciar sesión.
+     */
+    Authorization: PropTypes.string,
+    /**
+     * Variable booleana que va a definir si se abre la ventana emergente de inicio de sesión.
+     */
+    success: PropTypes.bool,
+    /**
+     * Objeto que almacena las credenciales del usuario cuando se loguea (nombre y contraseña).
+     * Se usa estos valores en la petición de inicio de sesión.
+     */
+    userLogin: PropTypes.object,
+    /**
+     * Variable booleana que indica si se han reconocido las credenciales o no para habilitar el botón de continuar.
+     */
+    log: PropTypes.bool,
+    /**
+     * Función que modificará la variable userLogin cuando el usuario haga cambios en los inputs de la página.
+     */
+    actualizarUser: PropTypes.func,
+    /**
+     * Funcion que contiene la petición de la solicitud de inicio de sesión.
+     * Se emplea la librería axios para el manejo de las peticiones a APIs externas.
+     */
+    sendInfo: PropTypes.func,
+    /**
+     * Funcion modifica el valor de la variable 'success' a verdadero
+     */
+    handleOpen: PropTypes.func,
+    /**
+     * Funcion modifica el valor de la variable 'success' a falso
+     */
+    handleClose: PropTypes.func,
+    /**
+     * Función que limpia los campos de inicio de sesión.
+     */
+    cleanFields: PropTypes.func
+}

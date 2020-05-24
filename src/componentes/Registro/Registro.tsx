@@ -2,15 +2,17 @@ import React, { useState } from 'react';
 import { Button, Checkbox, Form, Container, Segment } from 'semantic-ui-react'
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import { IUser } from '../../interfaces/IUser';
 import { Modal } from 'react-bootstrap'; 
 import { ToastContainer, toast, Zoom, Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import validadorTelefono from '../Compartido/ValidadorTelefono';
 import validadorNit from '../Compartido/ValidadorNit';
 import validadorCorreo from '../Compartido/ValidadorCorreo';
+import PropTypes from 'prop-types';
 
-
+/**
+ * Funcion de validacion que almacena la página de registro para nuevos usuarios/restaurantes
+ */
 const Registro: React.FC<{}> = () => {
 
     const [user, setUser] = useState({
@@ -35,9 +37,7 @@ const Registro: React.FC<{}> = () => {
     const sendInfo = () => {
 
         if(validarCampos() === true){
-            const newUser:IUser = JSON.parse('{"nit":"' + user.nit + '", "nombre":"' + user.nombre + '", "email":"' + user.email + '", "direccion":"' + user.direccion + '", "telefono":"' + user.telefono + '", "password":"' + user.password + '"}');
-
-            axios.post('https://micrin-login-service.herokuapp.com/registro',  newUser )
+            axios.post('https://micrin-login-service.herokuapp.com/registro',  JSON.parse('{"nit":"' + user.nit + '", "nombre":"' + user.nombre + '", "email":"' + user.email + '", "direccion":"' + user.direccion + '", "telefono":"' + user.telefono + '", "password":"' + user.password + '"}') )
             .then(res => {
                 console.log(res);
                 console.log(res.data);
@@ -173,3 +173,39 @@ const Registro: React.FC<{}> = () => {
 }
 
 export default Registro;
+
+Registro.propTypes = {
+    /**
+     * Objeto que almacena los datos del usuario en lo referente al local y a su cuenta
+     */
+    user: PropTypes.object,
+    /**
+     * Booleano que define cuando se abre o se cierra la ventana emergente de registro exitoso.
+     * Este valor será verdadero cuando en el llamado de la petición, se realiza de manera exitosa.
+     */
+    success: PropTypes.bool,
+    /**
+     * Funcion que modifica la variable 'user', una vez que el usuario ingrese valores en los campos disponibles.
+     */
+    actualizarUser: PropTypes.func,
+    /**
+     * Funcion que contiene la peticion a realizar para el registro de un nuevo usuario.
+     */
+    sendInfo: PropTypes.func,
+    /**
+     * Funcion que se encarga de validar que los campos esten llenos y los valores tengan los pertinentes formatos.
+     */
+    validarCampos: PropTypes.func,
+    /**
+     * Funcion que valida que todos los campos esten llenos o que no estén en sus valores por defecto.
+     */
+    camposLlenos: PropTypes.func,
+    /**
+     * Funcion que modificará la variable success a verdadero, habilitando el mensaje de la ventana emergente.
+     */
+    handleOpen: PropTypes.func,
+    /**
+     * Función que modificará la variable success a falso, cerrando o impidiendo que se muestre la ventana emergente.
+     */
+    handleClose: PropTypes.func
+}

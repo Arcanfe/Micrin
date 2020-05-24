@@ -2,6 +2,9 @@ import React from 'react';
 import { Button, Form, Container, Segment } from 'semantic-ui-react'
 import { Link } from 'react-router-dom';
 
+/**
+ * Funcion que almacena la página donde el usuario podrá recuperar su cuenta.
+ */
 const RecuperarCuenta: React.FC<{}> = () => {
 
     return(

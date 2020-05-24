@@ -3,6 +3,9 @@ import fallido from '../../adicionales/fallido.jpg';
 import { Container, Segment, Button } from 'semantic-ui-react'; 
 import { Link } from 'react-router-dom';
 
+/**
+ * Funcion que almacena la página de que notifica al usuario que no se ha podido recuperar su cuenta.
+ */
 const Recuperado: React.FC<{}> = () => {
 
     return(

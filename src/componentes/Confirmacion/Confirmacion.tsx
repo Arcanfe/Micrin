@@ -2,7 +2,11 @@ import React from 'react';
 import amigable from '../../adicionales/amigable.jpg';
 import { Container, Segment, Button } from 'semantic-ui-react'; 
 import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
 
+/**
+ * Componente que almacena la pagina de éxito cuando el usuario confirma su correo.
+ */
 const Confirmacion: React.FC<{}> = () => {
 
     return(

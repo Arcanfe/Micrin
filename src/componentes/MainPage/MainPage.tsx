@@ -6,6 +6,11 @@ import inventario from '../../adicionales/inventario.jpg';
 import { Button, Divider, Grid, Segment } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 
+/**
+ * Funcion que almacena la página principal de la aplicación.
+ * Esta página enrutará a las páginas de inicio de sesión, registro y recuperación de cuenta.
+ * Los enrutamientos se desarrollan gracias al componente 'Link' de la página 'react-router-dom'
+ */
 const MainPage: React.FC<{}> = () => {
     return(
         <div>

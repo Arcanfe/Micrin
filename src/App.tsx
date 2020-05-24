@@ -11,6 +11,9 @@ import Confirmacion from  './componentes/Confirmacion/Confirmacion';
 import Recuperado from  './componentes/Recuperado/Recuperado';
 import NoRecuperado from  './componentes/Recuperado/NoRecuperado';
 
+/**
+ * Funcion inicial. Es el componente que contendra toda la aplicación y emplea 'React-Router' para realizar el cambio de componentes.
+ */
 function App() {
   return (
     <div className="App">
