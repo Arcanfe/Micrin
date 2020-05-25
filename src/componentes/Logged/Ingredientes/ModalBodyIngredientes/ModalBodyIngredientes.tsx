@@ -4,6 +4,10 @@ import axios from 'axios';
 import { ToastContainer, toast, Zoom, Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import validadorNumero from '../../../Compartido/ValidadorNumero';
+import obtenerIdLocal from '../../../Compartido/ObtenerIdLocal';
+import existeUnidadMedida from '../../../Compartido/ExisteUnidadMedida';
+import crearUnidadMedida from '../../../Compartido/CrearUnidadMedida';
+import buscarCodigoUnidadMedida from '../../../Compartido/BuscarCodigoUnidadMedida';
 
 /**
  * Objeto que contiene los parámetros/props del contenedor
@@ -166,22 +170,31 @@ const ModalBodyIngredientes: React.FC<modalBodyFormProps> = (props: modalBodyFor
      * Funcino para crear un nuevo ingrediente
      */
     const createIngredient = async () => {
-        await findUnMedida();
-        if(validarCampos() === true){
-            console.log('entrada creacion ing');
-            console.log('{"nombre":"' + ingredienteNombre + '", "cantidad_total":"' + ingredienteCant + '", "existencia_maxima":"' + ingredienteMax + '", "existencia_minima":"' + ingredienteMin + '", "preparacion":' + ingredientePrep + ', "cod_local":"' + '"161"' + '", "cod_umedida":"' + '2' + '"}');
-            axios.post('https://inventario-services.herokuapp.com/invservice/stock/registro',  JSON.parse('{"nombre":"' + ingredienteNombre + '", "cantidad_total":"' + ingredienteCant + '", "existencia_maxima":"' + ingredienteMax + '", "existencia_minima":"' + ingredienteMin + '", "preparacion":' + ingredientePrep + ', "cod_local":"' + '161' + '", "cod_umedida":"' + ingredienteUn + '"}'), config )
-            .then(res => {
-                console.log('creacion ingrediente');
-                console.log(res);
-                toast.success('El ingrediente se ha creado satisfactoriamente');
-                //window.location.reload();
-            }).catch(error => {
-                console.log(error.response)
-            });
-            
-            props.handleSubmit();
+        let codigoUm = '';
+        const varId = await obtenerIdLocal(config);
+        try{
+            const ext = await existeUnidadMedida(config, unidadMedida, unidadMedidaCant);
+            if(ext === true){
+                codigoUm = await buscarCodigoUnidadMedida(config, unidadMedida, unidadMedidaCant);
+            }
+            else{
+                const creadoUM = await crearUnidadMedida(config, unidadMedida, unidadMedidaCant);
+                codigoUm = await buscarCodigoUnidadMedida(config, unidadMedida, unidadMedidaCant);
+            }
+            if(validarCampos() === true){
+                axios.post('https://inventario-services.herokuapp.com/invservice/stock/registro',  JSON.parse('{"nombre":"' + ingredienteNombre + '", "cantidad_total":"' + ingredienteCant + '", "existencia_maxima":"' + ingredienteMax + '", "existencia_minima":"' + ingredienteMin + '", "preparacion":' + ingredientePrep + ', "cod_local":"' + varId + '", "cod_umedida":"' + codigoUm + '"}'), config )
+                .then(res => {
+                    toast.success('El ingrediente se ha creado satisfactoriamente');
+                }).catch(error => {
+                    console.log(error.response)
+                });              
+                props.handleSubmit();
+            }
         }
+        catch(error){
+            toast.error('Un error inesperado ha ocurrido, por favor intente mas tarde.');
+            props.handleSubmit();
+        }      
     }
     /**
      * Funcion para actualizar un ingrediente
