@@ -3,28 +3,53 @@ import { Table, Container, Button, Icon } from 'semantic-ui-react';
 import { Modal } from 'react-bootstrap'; 
 import ModalBodyRegistroVenta from './ModalBodyRegistroVenta/ModalBodyRegistroVenta';
 import axios from 'axios';
-import { ToastContainer, toast, Zoom, Bounce } from 'react-toastify';
+import { ToastContainer, Zoom } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useLocation} from 'react-router-dom';
 
+/**
+ * Objeto que establece las propiedades o variables que recibira el componente
+ * pase: Token de acceso para realizar las peticiones
+ */
 type formProps = {
     pase: any
 }
 
-const PrecioVenta: React.FC<formProps> = (props: formProps) => {
-
+/**
+ * Funcion que almacena la 'página' de Registro de ventas de la aplicación, una vez el usuario se ha logueado.
+ * Este componente recibe como parámetro el token de permiso para realizar las distintas peticiones.
+ */
+const RegistroVenta: React.FC<formProps> = (props: formProps) => {
+    /**
+     * Variable que arma el formato del 'header' con el token para realizar las peticiones
+     */
     const config = {
         headers: props.pase
     }
-
+    /**
+     * Variable que almacena el codigo del registrio seleccionado para mandarlos a los componentes que tiene como parametro
+     */
     const [selectObj, setSelectObj] = useState('');
-
+    /**
+     * Variable booleana que define la apertura del modal para crear o ver un registro de venta
+     */
     const [openIngredient, setOpenIngredient] = useState(false); 
+    /**
+     * Variable string que define la operacion que se realizara
+     */
     const [operacion, setOperacion] = useState('');
+    /**
+     * Variable string que define el titulo del modal
+     */
     const [titleRegister, setTitleRegister] = useState('');
-
+    /**
+     * Array que establece la lista de registros del sistema
+     */
     const[register, setRegister] = useState<any[]>([]);
 
+    /**
+     * Funcion inicial que carga todos los registros de venta para mostrarlos.
+     * Los registro se almacenaran en la variable register
+     */
     useEffect(() => {
         axios.get('https://inventario-services.herokuapp.com/invservice/registro_venta/all', config)
         .then(result => {
@@ -34,21 +59,35 @@ const PrecioVenta: React.FC<formProps> = (props: formProps) => {
             setRegister(result.data);
         }).catch(console.log);
     },[]);
-
+    /**
+     * Funcion que modifica la variable 'openIngredient' a true
+     */
     const handleOpen = () => {
         setOpenIngredient(true);
     }
-    
+    /**
+     * Funcion que modifica la variable 'openIngredient' a false
+     */
     const handleClose = () => {
         setOpenIngredient(false);
     }
-
+    /**
+     * Funcion que inicializa la operacion para crear un nuevo registro de venta
+     * Establece la variable 'operacion' como crear.
+     * Modifica el titulo del modal
+     * Ejecuta la funcion 'handleOpen'
+     */
     const handleCreateOpen = () => {
         setOperacion('Crear');
         setTitleRegister('Crear registro de venta');
         handleOpen();
     }
-
+    /**
+     * Funcion que inicializa la operacion para ver un registro de venta
+     * Establece la variable 'operacion' como ver.
+     * Modifica el titulo del modal
+     * Ejecuta la funcion 'handleOpen'
+     */
     const handleViewOpen = (e:any) => {
         setSelectObj(e);
         setOperacion('Ver');
@@ -113,4 +152,4 @@ const PrecioVenta: React.FC<formProps> = (props: formProps) => {
     );
 }
 
-export default PrecioVenta;
+export default RegistroVenta;

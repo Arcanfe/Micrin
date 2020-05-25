@@ -149,7 +149,7 @@ const Registro: React.FC<{}> = () => {
                 <Link to='/'>
                     <Button type='submit'>Volver</Button>
                 </Link>
-                <Button type='submit' onClick={sendInfo}>Prueba</Button>
+                <Button type='submit' onClick={sendInfo}>Registrarme</Button>
             </Form>
             </Segment>
             </Container>
@@ -159,7 +159,7 @@ const Registro: React.FC<{}> = () => {
                 <Modal.Title>Registro exitoso</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    Su local se ha creado exitosamente. Ahora puede iniciar sesión.
+                    Tu local se ha creado exitosamente. Recuerda que es necesario confirmar tu correo para iniciar sesión. Bienvenido a Micrin.
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleClose}>

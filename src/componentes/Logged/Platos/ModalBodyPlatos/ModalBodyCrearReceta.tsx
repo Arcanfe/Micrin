@@ -1,7 +1,7 @@
 import React, { useState, useEffect} from 'react';
-import { Container, Button, Icon, Input, Grid } from 'semantic-ui-react';
+import { Container, Button, Input, Grid } from 'semantic-ui-react';
 import axios from 'axios';
-import { ToastContainer, toast, Zoom, Bounce } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import validadorNumero from '../../../Compartido/ValidadorNumero';
 

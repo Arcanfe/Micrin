@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Container } from 'semantic-ui-react';
 import axios from 'axios';
+import PropTypes from 'prop-types';
 
+/**
+ * Funcion que almacena el componente de 'Precio de mercado' de la aplicación.
+ * En esta función se hace el llamado al API para obtener los valores de los precios de corabastos.
+ */
 const PrecioMercado: React.FC<{}> = () => {
 
     const[stock, setStock] = useState<any[]>([]);
@@ -53,3 +58,16 @@ const PrecioMercado: React.FC<{}> = () => {
 }
 
 export default PrecioMercado;
+
+PrecioMercado.propTypes = {
+    /**
+     * Arreglo que recibe cada uno de los objetos a presentar.
+     * Almacena los productos que se ofertan en corabastos para posteriormente mostrarlos.
+     */
+    stock: PropTypes.array,
+    /**
+     * Función clásica de react hooks que permite realizar lo que contenga desde el moomento en que se renderiza por primera vez el componente.
+     * Para el caso particular, se realiza el llamado al API en esta función.
+     */
+    useEffect: PropTypes.func
+}

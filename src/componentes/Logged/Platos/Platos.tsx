@@ -5,9 +5,8 @@ import ModalBodyPlatos from './ModalBodyPlatos/ModalBodyPlatos';
 import ModalBodyCrearReceta from './ModalBodyPlatos/ModalBodyCrearReceta';
 import ModalBodyUpdateReceta from './ModalBodyPlatos/ModalBodyUpdateReceta';
 import axios from 'axios';
-import { ToastContainer, toast, Zoom, Bounce } from 'react-toastify';
+import { ToastContainer, toast, Zoom } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useLocation} from 'react-router-dom';
 
 type formProps = {
     pase: any

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Container, Input, Grid, Select } from 'semantic-ui-react';
+import { Button, Container, Input, Grid } from 'semantic-ui-react';
 import axios from 'axios';
-import { ToastContainer, toast, Zoom, Bounce } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import validadorNumero from '../../../Compartido/ValidadorNumero';
 
@@ -116,13 +116,6 @@ const ModalBodyPlatos: React.FC<modalBodyFormProps> = (props: modalBodyFormProps
                         </Grid.Column>
                         <Grid.Column>
                             <Input placeholder={props.typeOperation === 'Crear'? 'Valor' : platoValor} disabled={props.typeOperation === 'Ver'} onChange={actualizarPlatoValor} value={platoValor}/>
-                        </Grid.Column>
-                    </Grid.Row>
-                    <Grid.Row>
-                        <Grid.Column>
-                            <label>Ingredientes:</label>
-                        </Grid.Column>
-                        <Grid.Column>
                         </Grid.Column>
                     </Grid.Row>
                 </Grid>

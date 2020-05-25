@@ -5,6 +5,13 @@ import { ToastContainer, toast, Zoom, Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import validadorNumero from '../../../Compartido/ValidadorNumero';
 
+/**
+ * Objeto que contiene los parámetros/props del contenedor
+ * typeOperation: string que define si se pretende crear, modificar o ve un ingrediente, y que habilita o deshabilita parte del componente de ser necesario
+ * handleSumbit: función que cierra el modal en el que se ubica este componente.
+ * ObjectS: Código del ingrediente seleccionado
+ * tok: Valor del token
+ */
 type modalBodyFormProps = {
     typeOperation: any,
     handleSubmit: any,
@@ -12,22 +19,54 @@ type modalBodyFormProps = {
     tok: any
 }
 
+/**
+ * Funcion que contiene el componente que se mostrara en el modal para crear, modificar o eliminar un ingrediente
+ * @param props Objeto con valores importantes que definen el tipo de accion a realizar.
+ */
 const ModalBodyIngredientes: React.FC<modalBodyFormProps> = (props: modalBodyFormProps) => {
-
+    /**
+     * Variable que establece el formato del objeto que se ha de pasar como 'header' en las peticiones.
+     * Emplea el token recibido en las propiedades.
+     */
     const config = {
         headers: props.tok
     }
-
+    /**
+     * Variable que almacena el nombre del ingrediente
+     */
     const[ingredienteNombre, setIngredienteNombre] = useState('');
+    /**
+     * Variable que almacena la cantidad del ingrediente
+     */
     const[ingredienteCant, setIngredienteCant] = useState('');
+    /**
+     * Variable que almacena la cantidad maxima del ingrediente
+     */
     const[ingredienteMax, setIngredienteMax] = useState('');
+    /**
+     * Variable que almacena la cantidad minima del ingrediente
+     */
     const[ingredienteMin, setIngredienteMin] = useState('');
+    /**
+     * Variable que indica si el ingrediente es o no una preparacion
+     */
     const[ingredientePrep, setIngredientePrep] = useState(false);
+    /**
+     * Variable que almacena el codigo del ingrediente
+     */
     const[ingredienteUn, setIngredienteUn] = useState('');
-
+    /**
+     * Variable que almacena el nombre de de la unidad de medida con que trabaja el ingrediente
+     */
     const[unidadMedida, setUnidadMedida] = useState('');
+    /**
+     * Variable que almacena la cantidad de la unidad de medida con que trabaja el ingrediente
+     */
     const[unidadMedidaCant, setUnidadMedidaCant] = useState('');
 
+    /**
+     * Funcion que, en caso que la funcion sea ver o modificar un ingrediente, carga la informacion del ingrediente para ponerla en los campos del modal
+     */
     useEffect(() => {
         if(props.typeOperation !== 'Crear'){
             axios.get('https://inventario-services.herokuapp.com/invservice/stock/getone/?codigo=' + props.objectS, config)
@@ -49,35 +88,45 @@ const ModalBodyIngredientes: React.FC<modalBodyFormProps> = (props: modalBodyFor
     useEffect(() => {
         console.log(ingredienteUn)
     }, [ingredienteUn]);
-
+    /**
+     * Funcion que modifica la variable 'ingredienteCant' segun lo que reciba de parametro
+     */
     const actualizarIngredienteCant = (e: any) => {
         setIngredienteCant(e.target.value);
     }
-
+    /**
+     * Funcion que modifica la variable 'ingredienteMax' segun lo que reciba de parametro
+     */
     const actualizarIngredienteMax = (e: any) => {
         setIngredienteMax(e.target.value);
     }
-
+    /**
+     * Funcion que modifica la variable 'ingredienteMin' segun lo que reciba de parametro
+     */
     const actualizarIngredienteMin = (e: any) => {
         setIngredienteMin(e.target.value);
     }
-
+    /**
+     * Funcion que modifica la variable 'ingredienteNombre' segun lo que reciba de parametro
+     */
     const actualizarIngredienteNombre = (e: any) => {
         setIngredienteNombre(e.target.value);
     }
-
+    /**
+     * Funcion que modifica la variable 'unidadMedida' segun lo que reciba de parametro
+     */
     const actualizarUnidadMedida = (e: any) => {
         setUnidadMedida(e.target.value);
     }
-
+    /**
+     * Funcion que modifica la variable 'unidadCantidad' segun lo que reciba de parametro
+     */
     const actualizarUnidadCantidad = (e: any) => {
         setUnidadMedidaCant(e.target.value);
     }
-
-    const addIngredient = () => {
-
-    }
-
+    /**
+     * Funcion que encuentra un registro en la tabla unidadMedida a partir del codigo
+     */
     const fijarUnidad = (un:string) => {
         console.log(un)
         axios.get('https://inventario-services.herokuapp.com/invservice/unidadmedida/getone?codigo=' + un, config)
@@ -90,11 +139,15 @@ const ModalBodyIngredientes: React.FC<modalBodyFormProps> = (props: modalBodyFor
 
             ); 
     }
-
+    /**
+     * Funcion que crea una nueva unidad de medida
+     */
     const addUnMedida = () => {
         axios.post('https://inventario-services.herokuapp.com/invservice/unidadmedida/registro', JSON.parse('{"unidad_medida":"' + unidadMedida + '", "cantidad":"' + unidadMedidaCant + '"}'), config);
     }
-
+    /**
+     * Funcion que encuentra una unidad de medida a partir del nombre y cantidad. En caso de no encontrarlo, redirige a la funcion de crear la unidad
+     */
     const findUnMedida = async () => {
         toast.info('creando unidad de medida');
         await axios.get('https://inventario-services.herokuapp.com/invservice/unidadmedida/getcode?nombre=' + unidadMedida + '&cantidad=' + unidadMedidaCant, config)
@@ -109,7 +162,9 @@ const ModalBodyIngredientes: React.FC<modalBodyFormProps> = (props: modalBodyFor
             console.log(error.response);
         });
     }
-
+    /**
+     * Funcino para crear un nuevo ingrediente
+     */
     const createIngredient = async () => {
         await findUnMedida();
         if(validarCampos() === true){
@@ -128,7 +183,9 @@ const ModalBodyIngredientes: React.FC<modalBodyFormProps> = (props: modalBodyFor
             props.handleSubmit();
         }
     }
-
+    /**
+     * Funcion para actualizar un ingrediente
+     */
     const updateIngredient = async () => {
         await findUnMedida();
         if(validarCampos() === true){
@@ -147,7 +204,9 @@ const ModalBodyIngredientes: React.FC<modalBodyFormProps> = (props: modalBodyFor
             props.handleSubmit();
         }
     }
-
+    /**
+     * Funcion que valida el formato de las variables que deben ser numericas
+     */
     function validarCampos() {
         if(camposLlenos()){
             if(validadorNumero(ingredienteCant)){
@@ -175,7 +234,9 @@ const ModalBodyIngredientes: React.FC<modalBodyFormProps> = (props: modalBodyFor
         toast.error('Por favor llenar todos los campos');
         return false;
     }
-
+    /**
+     * Funcion que valida que los campos del registro estén llenos.
+     */
     function camposLlenos(){
         if(ingredienteNombre !== '' && ingredienteCant !== '' && ingredienteMax !== '' && ingredienteMin !== '' && unidadMedida !== '' && unidadMedidaCant !== '' ){
             return true;

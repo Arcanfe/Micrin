@@ -2,13 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { Button, Container, Input, Grid } from 'semantic-ui-react';
 import { Modal } from 'react-bootstrap'; 
 import axios from 'axios';
-import { ToastContainer, toast, Zoom, Bounce } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import validadorNumero from '../../../Compartido/ValidadorNumero';
 import validadorFecha from '../../../Compartido/ValidadorFecha';
 import ModalBodyVerPlatos from './ModalBodyVerPlatos';
 
-
+/**
+ * Objeto que contiene los parámetros/props del contenedor
+ * typeOperation: Define la accion que se esta realizando en el componente: Ver o Crear
+ * handleSumbit: función que cierra el modal en el que se ubica este componente.
+ * ObjectS: Código del ingrediente seleccionado
+ * tok: Valor del token
+ */
 type modalBodyFormProps = {
     typeOperation: any,
     handleSubmit: any,
@@ -16,26 +22,62 @@ type modalBodyFormProps = {
     tok: any
 }
 
+/**
+ * Funcion que contiene el modal que se muestra para crear o ver un registro de venta
+ */
 const ModalBodyRegistroVenta: React.FC<modalBodyFormProps> = (props: modalBodyFormProps) => {
-
+    /**
+     * Variable que establece el formato del objeto que se ha de pasar como 'header' en las peticiones.
+     * Emplea el token recibido en las propiedades.
+     */
     const config = {
         headers: props.tok
     }
-
+    /**
+     * Variable que almacena el valor de la fecha de un registro de venta
+     */
     const[regVentFecha, setRegVentFecha] = useState('');
+    /**
+     * Variable que almacena la mesa de donde se esta realizando un registro de venta
+     */
     const[regVentMesa, setRegVentMesa] = useState('');
+    /**
+     * Variable que almacena el valor total de un registro de venta
+     */
     const[regVentValor, setRegVentValor] = useState('');
-
+    /**
+     * Variable que define el nombre del plato vendido en un registro de venta
+     */
     const[rvPlato, setRvPlato] = useState('');
+    /**
+     * Variable que define el numero de platos del plato seleccionado
+     */
     const[rvCantidad, setRvCantidad] = useState('');
-
+    /**
+     * Variable booleana que define la apertura del modal para añadir un plato a un registro de venta
+     */
     const[openCrearPlato, setOpenCrearPlato] = useState(false);
-    
+    /**
+     * Variable booleana que establece si se ha agregado el numero minimo de platos a un registro de venta para terminar un registro
+     */    
     const[agregadoMin, setAgregadoMin] = useState(false);
+    /**
+     * Variable booleana que define si el plato escrito por el usuario existe en el sistema
+     */
     const[platoEncontrado, setPlatoEncontrado] = useState(false);
+    /**
+     * Variable que almacena el codigo del plato a partir del nombre escrito por el usuario
+     */
     const[platoCodigo, setPlatoCodigo] = useState('');
+    /**
+     * Variable que almacena el codigo del registro de venta creado
+     */
     const[rvCodigo, setRvCodigo] = useState('');
 
+    /**
+     * Funcion que inicializa el componente.
+     * En caso que la operacion sea ver un registro de venta, se carga la informacion del registro
+     */
     useEffect(() => {
         if(props.typeOperation !== 'Crear'){
             axios.get('https://inventario-services.herokuapp.com/invservice/registro_venta/getone?codigo=' + props.objectS, config)
@@ -48,34 +90,53 @@ const ModalBodyRegistroVenta: React.FC<modalBodyFormProps> = (props: modalBodyFo
             );            
         };
     },[]);
-
+    /**
+     * Función que modifica la variable regVentFecha
+     * @param e Cadena string que usuario ingresa como fecha de un registro de venta
+     */
     const actualizarRegistroVentaFecha = (e: any) => {
         setRegVentFecha(e.target.value);
     }
-
+    /**
+     * Función que modifica la variable regVentMesa
+     * @param e Cadena string que usuario ingresa como mesa de donde se realiza un registro de venta
+     */
     const actualizarRegistroVentaMesa = (e: any) => {
         setRegVentMesa(e.target.value);
     }
-
+    /**
+     * Función que modifica la variable regVentValor
+     * @param e Cadena string que usuario ingresa como valor de un registro de venta
+     */
     const actualizarRegistroVentaValor = (e: any) => {
         setRegVentValor(e.target.value);
     }
-
+    /**
+     * Función que modifica la variable regVentPlato
+     * @param e Cadena string que usuario ingresa como plato de un registro de venta
+     */
     const actualizarRvPlato = (e: any) => {
         setRvPlato(e.target.value);
     }
-
+    /**
+     * Función que modifica la variable regVentCantidad
+     * @param e Cadena string que usuario ingresa como cantidad de un plato de un registro de venta
+     */
     const actualizarRvCantidad = (e: any) => {
         setRvCantidad(e.target.value);
     }
-
+    /**
+     * Función inicializa la operacion para añadir un nuevo primer plato a un registro de venta
+     */
     const nuevoPlato = () => {
         if(validarCampos() === true){
             handleOpenCrearPlato();
         }
         
     }
-
+    /**
+     * Función que inicializa la operacion para añadir un plato a los ya existente de un registro de venta
+     */
     const agregarPlato = () => {
         if(validarCamposPlato() === true){
             if(agregadoMin === false){
@@ -87,7 +148,9 @@ const ModalBodyRegistroVenta: React.FC<modalBodyFormProps> = (props: modalBodyFo
             setRvCantidad('');
         }   
     }
-
+    /**
+     * Funcion que inicia la operacion para finalizar la creacion de un registro de venta
+     */
     const finalizarRegVent = () => {
         if(validarCamposPlato() === true){
             if(agregadoMin === false){
@@ -99,7 +162,9 @@ const ModalBodyRegistroVenta: React.FC<modalBodyFormProps> = (props: modalBodyFo
             props.handleSubmit();
         }
     }
-
+    /**
+     * Funcion que realiza la accion de registrar un plato, asociado con un registro de venta
+     */
     const createRVPlato = async () => {
         await obtenerInfoPlato();
             if(platoEncontrado === true){
@@ -116,7 +181,9 @@ const ModalBodyRegistroVenta: React.FC<modalBodyFormProps> = (props: modalBodyFo
                 props.handleSubmit();
             }
     }
-
+    /**
+     * Funcion que realiza la peticion para determinar la existencia de un nuevo plato a partir del nombre ingresado por el usuario
+     */
     const obtenerInfoPlato = async () => {
         //URL por asignar de obtener plato por el nombre
         await axios.get('https://inventario-services.herokuapp.com/invservice/plato/getPlato/?nombre=' + rvPlato, config)
@@ -131,7 +198,9 @@ const ModalBodyRegistroVenta: React.FC<modalBodyFormProps> = (props: modalBodyFo
             console.log(result);
         });
     }
-
+    /**
+     * Funcion que realiza la peticion al API para crear un registro de venta
+     */
     const createRegVent = () => {
         console.log('entrada creacion rv');
         console.log('{"precio_total":' + regVentValor + ', "numero_mesa":' + regVentMesa + ', "fecha":"' + regVentFecha + '", "cod_local":"' + '161' + '"}');
@@ -148,7 +217,10 @@ const ModalBodyRegistroVenta: React.FC<modalBodyFormProps> = (props: modalBodyFo
         
         //props.handleSubmit();
     }
-
+    /**
+     * Funcion que valida el formato numerico de los campos 'mesa' y 'valor' del registro de venta
+     * Valida ademas el formato de la fecha del registro de venta a crear.
+     */
     function validarCampos(){
         if(camposLlenos()){
             if(validadorFecha(regVentFecha)){
@@ -171,7 +243,9 @@ const ModalBodyRegistroVenta: React.FC<modalBodyFormProps> = (props: modalBodyFo
         toast.error('Todos los campos deben ser llenados');
         return false;
     }
-
+    /**
+     * Funcion que valida el formato del campo cantidad, al momento de anexar un plato a un registro de venta
+     */
     function validarCamposPlato(){
         if(camposLlenosPlato()){
                 if(validadorNumero(rvCantidad)){
@@ -184,22 +258,30 @@ const ModalBodyRegistroVenta: React.FC<modalBodyFormProps> = (props: modalBodyFo
         toast.error('Todos los campos deben ser llenados');
         return false;
     }
-
+    /**
+     * Funcion que modifica la variable 'openCrearPlato' a true
+     */
     const handleOpenCrearPlato = () => {
         setOpenCrearPlato(true);
     }
-
+    /**
+     * Funcion que modifica la variable 'openCrearPlato' a false
+     */
     const handleCloseCrearPlato = () => {
         setOpenCrearPlato(false);
     }
-
+    /**
+     * Funcion que valida que los campos para crear un registro de venta no esten vacios
+     */
     function camposLlenos(){
         if(regVentFecha !== '' && regVentMesa !== '' && regVentValor !== ''){
             return true;
         }
         return false;
     }
-
+    /**
+     * Funcion que valida que los campos para anexar un plato a un registro de venta no esten vacios
+     */
     function camposLlenosPlato(){
         if(rvPlato !== '' && rvCantidad !== ''){
             return true;

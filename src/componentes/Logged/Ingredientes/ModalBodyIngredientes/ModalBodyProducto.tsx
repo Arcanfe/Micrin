@@ -6,24 +6,53 @@ import 'react-toastify/dist/ReactToastify.css';
 import validadorNumero from '../../../Compartido/ValidadorNumero';
 import validadorFecha from '../../../Compartido/ValidadorFecha';
 
+/**
+ * Objeto que contiene los parámetros/props del contenedor
+ * handleSumbit: función que cierra el modal en el que se ubica este componente.
+ * ObjectS: Código del ingrediente seleccionado
+ * tok: Valor del token
+ */
 type modalBodyFormProps = {
     handleSubmit: any,
     objectS: any,
     tok: any
 }
 
+/**
+ * Funcion que contiene el componente del modal que se muestra para añadir productos de un ingrediente existente
+ */
 const ModalBodyIngredientes: React.FC<modalBodyFormProps> = (props: modalBodyFormProps) => {
-
+    /**
+     * Variable que establece el formato del objeto que se ha de pasar como 'header' en las peticiones.
+     * Emplea el token recibido en las propiedades.
+     */
     const config = {
         headers: props.tok
     }
-
+    /**
+     * Variable que almacena el nombre del producto
+     */
     const [nombreProd, setNombreProd] = useState('');
+    /**
+     * Variable que almacena la cantidad del producto a ingresar.
+     */
     const [cantidad, setCantidad] = useState('');
+    /**
+     * Variable que almacena el precio de adquisicion de un producto
+     */
     const [precio, setPrecio] = useState('');
+    /**
+     * Variable que almacena la fecha de vencimiento del producto a ingresar
+     */
     const [fechaV, setFechaV] = useState('');
+    /**
+     * Variable que almacena la fecha de adquisicion del producto a ingresar.
+     */
     const [fechaA, setFechaA] = useState('');
 
+    /**
+     * Funcion que carga los datos del ingrediente seleccionado para obtener el nombre
+     */
     useEffect(() => {
         axios.get('https://inventario-services.herokuapp.com/invservice/stock/getone/?codigo=' + props.objectS, config)
         .then(result => {
@@ -32,7 +61,9 @@ const ModalBodyIngredientes: React.FC<modalBodyFormProps> = (props: modalBodyFor
 
         ); 
     });
-
+    /**
+     * Funcion que realiza la peticion para añadir un producto
+     */
     const addProduct = () => {
         if(validarCampos() === true){
             console.log('{"cantidad":' + cantidad + ', "precioxunidad":' + precio + ', "fecha_vencimiento":"' + fechaV + '", "fecha_adquisicion":"' + fechaA + '", "cod_stock":' + props.objectS + '}');
@@ -48,23 +79,33 @@ const ModalBodyIngredientes: React.FC<modalBodyFormProps> = (props: modalBodyFor
             props.handleSubmit();
         }
     }
-
+    /**
+     * Funcion que modifica la variable 'cantidad' a partir de lo recibido en el parametro
+     */
     const actualizarCantidad = (e: any) => {
         setCantidad(e.target.value);
     }
-
+    /**
+     * Funcion que modifica la variable 'precio' a partir de lo recibido en el parametro
+     */
     const actualizarPrecio = (e: any) => {
         setPrecio(e.target.value);
     }
-
+    /**
+     * Funcion que modifica la variable 'fechaV' a partir de lo recibido en el parametro
+     */
     const actualizarFechaV = (e: any) => {
         setFechaV(e.target.value);
     }
-
+    /**
+     * Funcion que modifica la variable 'fechaA' a partir de lo recibido en el parametro
+     */
     const actualizarFechaA = (e: any) => {
         setFechaA(e.target.value);
     }
-
+    /**
+     * Funcion que valida el formato numerico de los campos cantidad y precio; valida el formato de fecha para ls campos fechaV y fechaA
+     */
     function validarCampos() {
         if(camposLlenos()){
             if(validadorNumero(cantidad)){
@@ -92,7 +133,9 @@ const ModalBodyIngredientes: React.FC<modalBodyFormProps> = (props: modalBodyFor
         toast.error('Por favor llenar todos los campos');
         return false;
     }
-
+    /**
+     * Funcion que valida que los campos ingresados por el usuario no se encuentren llenos
+     */
     function camposLlenos(){
         if(cantidad !== '' && precio !== '' && fechaV !== '' && fechaA !== '' ){
             return true;
