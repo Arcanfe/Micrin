@@ -7,6 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import validadorNumero from '../../../Compartido/ValidadorNumero';
 import validadorFecha from '../../../Compartido/ValidadorFecha';
 import ModalBodyVerPlatos from './ModalBodyVerPlatos';
+import obtenerIdLocal from '../../../Compartido/ObtenerIdLocal';
 
 /**
  * Objeto que contiene los parámetros/props del contenedor
@@ -201,10 +202,9 @@ const ModalBodyRegistroVenta: React.FC<modalBodyFormProps> = (props: modalBodyFo
     /**
      * Funcion que realiza la peticion al API para crear un registro de venta
      */
-    const createRegVent = () => {
-        console.log('entrada creacion rv');
-        console.log('{"precio_total":' + regVentValor + ', "numero_mesa":' + regVentMesa + ', "fecha":"' + regVentFecha + '", "cod_local":"' + '161' + '"}');
-        axios.post('https://inventario-services.herokuapp.com/invservice/registro_venta/registro',  JSON.parse('{"precio_total":' + regVentValor + ', "numero_mesa":' + regVentMesa + ', "fecha":"' + regVentFecha + '", "cod_local":"' + '161' + '"}'), config )
+    const createRegVent = async () => {
+        const varId = await obtenerIdLocal(config);
+        axios.post('https://inventario-services.herokuapp.com/invservice/registro_venta/registro',  JSON.parse('{"precio_total":' + regVentValor + ', "numero_mesa":' + regVentMesa + ', "fecha":"' + regVentFecha + '", "cod_local":"' + varId + '"}'), config )
         .then(res => {
             console.log('creacion rv');
             console.log(res);

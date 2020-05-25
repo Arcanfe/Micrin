@@ -4,6 +4,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import validadorNumero from '../../../Compartido/ValidadorNumero';
+import obtenerIdLocal from '../../../Compartido/ObtenerIdLocal';
 
 type modalBodyFormProps = {
     typeOperation: any,
@@ -42,11 +43,10 @@ const ModalBodyPlatos: React.FC<modalBodyFormProps> = (props: modalBodyFormProps
         setPlatoValor(e.target.value);
     }
 
-    const createPlato = () => {
+    const createPlato = async () => {
+        const varId = await obtenerIdLocal(config);
         if(validarCampos() === true){
-            console.log('entrada creacion plato');
-            console.log('{"nombre":"' + platoNombre + '", "costo":"' + platoValor + '", "cod_local":"' + '161' + '"}');
-            axios.post('https://inventario-services.herokuapp.com/invservice/plato/registro',  JSON.parse('{"nombre":"' + platoNombre + '", "costo":"' + platoValor + '", "cod_local":"' + '161' + '"}'), config )
+            axios.post('https://inventario-services.herokuapp.com/invservice/plato/registro',  JSON.parse('{"nombre":"' + platoNombre + '", "costo":"' + platoValor + '", "cod_local":"' + varId + '"}'), config )
             .then(res => {
                 console.log('creacion plato');
                 console.log(res);
@@ -60,11 +60,10 @@ const ModalBodyPlatos: React.FC<modalBodyFormProps> = (props: modalBodyFormProps
         }
     }
 
-    const updatePlato = () => {
+    const updatePlato = async () => {
+        const varId = await obtenerIdLocal(config);
         if(validarCampos() === true){
-            console.log('entrada modificacion plato');
-            console.log('{"nombre":"' + platoNombre + '", "costo":"' + platoValor + '", "cod_local":"' + '161' + '"}');
-            axios.put('https://inventario-services.herokuapp.com/invservice/plato/update',  JSON.parse('{"nombre":"' + platoNombre + '", "costo":"' + platoValor + '", "cod_local":"' + '161' + '"}'), config )
+            axios.put('https://inventario-services.herokuapp.com/invservice/plato/update',  JSON.parse('{"nombre":"' + platoNombre + '", "costo":"' + platoValor + '", "cod_local":"' + varId + '"}'), config )
             .then(res => {
                 console.log('creacion plato');
                 console.log(res);

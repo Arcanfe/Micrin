@@ -195,7 +195,7 @@ const ModalBodyIngredientes: React.FC<modalBodyFormProps> = (props: modalBodyFor
                 codigoUm = await buscarCodigoUnidadMedida(config, unidadMedida, unidadMedidaCant);
             }
             if(validarCampos() === true){
-                axios.put('https://inventario-services.herokuapp.com/invservice/stock/update',  JSON.parse('{"nombre":"' + ingredienteNombre + '", "cantidad_total":"' + ingredienteCant + '", "existencia_maxima":"' + ingredienteMax + '", "existencia_minima":"' + ingredienteMin + '", "preparacion":' + ingredientePrep + ', "cod_local":"' + '161' + '", "cod_umedida":"' + '2' + '"}'), config )
+                axios.put('https://inventario-services.herokuapp.com/invservice/stock/update',  JSON.parse('{"nombre":"' + ingredienteNombre + '", "cantidad_total":"' + ingredienteCant + '", "existencia_maxima":"' + ingredienteMax + '", "existencia_minima":"' + ingredienteMin + '", "preparacion":' + ingredientePrep + ', "cod_local":"' + varId + '", "cod_umedida":"' + codigoUm + '"}'), config )
                 .then(res => {
                     toast.success('El ingrediente se ha actualizados satisfactoriamente. Por favor recargue la pagina para ver los cambios.');
                     //window.location.reload();
