@@ -7,7 +7,10 @@ import 'react-toastify/dist/ReactToastify.css';
 import validadorNumero from '../../../Compartido/ValidadorNumero';
 import validadorFecha from '../../../Compartido/ValidadorFecha';
 import ModalBodyVerPlatos from './ModalBodyVerPlatos';
-import obtenerIdLocal from '../../../Compartido/ObtenerIdLocal';
+import crearRegistroVenta from '../../../Compartido/CrearRegistroVenta';
+import obtenerCodigoPlato from '../../../Compartido/ObtenerCodigoPlato';
+import encontrarPlato from '../../../Compartido/EncontrarPlato';
+import crearRegVentPlato from '../../../Compartido/CrearRegVentPlato';
 
 /**
  * Objeto que contiene los parámetros/props del contenedor
@@ -69,11 +72,11 @@ const ModalBodyRegistroVenta: React.FC<modalBodyFormProps> = (props: modalBodyFo
     /**
      * Variable que almacena el codigo del plato a partir del nombre escrito por el usuario
      */
-    const[platoCodigo, setPlatoCodigo] = useState('');
+    let platoCodigo = '';
     /**
      * Variable que almacena el codigo del registro de venta creado
      */
-    const[rvCodigo, setRvCodigo] = useState('');
+    let rvCodigo = '';
 
     /**
      * Funcion que inicializa el componente.
@@ -138,84 +141,60 @@ const ModalBodyRegistroVenta: React.FC<modalBodyFormProps> = (props: modalBodyFo
     /**
      * Función que inicializa la operacion para añadir un plato a los ya existente de un registro de venta
      */
-    const agregarPlato = () => {
+    const agregarPlato = async () => {
         if(validarCamposPlato() === true){
-            if(agregadoMin === false){
-                createRegVent();
-                setAgregadoMin(true);
+            try{
+                let platoEncontrado = await encontrarPlato(config, rvPlato);
+                if(platoEncontrado === true){    
+                    if(agregadoMin === false){
+                        rvCodigo = await crearRegistroVenta(config, regVentValor, regVentFecha, regVentMesa);
+                        setAgregadoMin(true);
+                    }
+                    platoCodigo = await obtenerCodigoPlato(config, rvPlato);
+                    crearRegVentPlato(config, rvCodigo, platoCodigo, rvCantidad);
+                    setRvPlato('');
+                    setRvCantidad('');
+                }
+                else{
+                    toast.error('El plato ingresado no se ha encontrado.');
+                    setRvPlato('');
+                }
             }
-            createRVPlato();
-            setRvPlato('');
-            setRvCantidad('');
+            catch(error){
+                toast.error('Un error inesperado ha ocurrido, por favor intente mas tarde.');
+                handleCloseCrearPlato();
+                props.handleSubmit();
+            }
         }   
     }
     /**
      * Funcion que inicia la operacion para finalizar la creacion de un registro de venta
      */
-    const finalizarRegVent = () => {
+    const finalizarRegVent = async () => {
         if(validarCamposPlato() === true){
-            if(agregadoMin === false){
-                createRegVent();
-                setAgregadoMin(true);
+            try{
+                let platoEncontrado = await encontrarPlato(config, rvPlato);
+                if(platoEncontrado === true){  
+                    if(agregadoMin === false){
+                        rvCodigo = await crearRegistroVenta(config, regVentValor, regVentFecha, regVentMesa);
+                        setAgregadoMin(true);
+                    }
+                    platoCodigo = await obtenerCodigoPlato(config, rvPlato);
+                    crearRegVentPlato(config, rvCodigo, platoCodigo, rvCantidad);
+                    handleCloseCrearPlato();
+                    props.handleSubmit();
+                }
+                else{
+                    toast.error('El plato ingresado no se ha encontrado.');
+                    setRvPlato('');
+                }
             }
-            createRVPlato();
-            handleCloseCrearPlato();
-            props.handleSubmit();
-        }
-    }
-    /**
-     * Funcion que realiza la accion de registrar un plato, asociado con un registro de venta
-     */
-    const createRVPlato = async () => {
-        await obtenerInfoPlato();
-            if(platoEncontrado === true){
-                console.log('{"cod_rv":"' + rvCodigo + '", "cod_plato":"' + platoCodigo + '", "cantidad":"' + rvCantidad + '"}');
-                axios.post('https://inventario-services.herokuapp.com/invservice/rv_plato/registro', JSON.parse('{"cod_rv":"' + rvCodigo + '", "cod_plato":"' + platoCodigo + '", "cantidad":"' + rvCantidad + '"}'), config)
-                .then(result => {
-                    console.log(result);
-                    toast.success('El plato "' + rvPlato + '" se ha añadido a la preparacion');
-                }).catch(result => {
-                    console.log('error');
-
-                    console.log(result);
-                });
+            catch(error){
+                toast.error('Un error inesperado ha ocurrido, por favor intente mas tarde.');
+                handleCloseCrearPlato();
                 props.handleSubmit();
             }
-    }
-    /**
-     * Funcion que realiza la peticion para determinar la existencia de un nuevo plato a partir del nombre ingresado por el usuario
-     */
-    const obtenerInfoPlato = async () => {
-        //URL por asignar de obtener plato por el nombre
-        await axios.get('https://inventario-services.herokuapp.com/invservice/plato/getPlato/?nombre=' + rvPlato, config)
-        .then(result => {
-            console.log(result);
-            setPlatoCodigo(result.data.codigo);
-            setPlatoEncontrado(true);
-            console.log(platoCodigo);
-        }).catch(result => {
-            console.log('error');
-            toast.error('No se reconoce el plato. Por favor intente de nuevo.');
-            console.log(result);
-        });
-    }
-    /**
-     * Funcion que realiza la peticion al API para crear un registro de venta
-     */
-    const createRegVent = async () => {
-        const varId = await obtenerIdLocal(config);
-        axios.post('https://inventario-services.herokuapp.com/invservice/registro_venta/registro',  JSON.parse('{"precio_total":' + regVentValor + ', "numero_mesa":' + regVentMesa + ', "fecha":"' + regVentFecha + '", "cod_local":"' + varId + '"}'), config )
-        .then(res => {
-            console.log('creacion rv');
-            console.log(res);
-            setRvCodigo(res.data);
-            toast.success('El registro se ha creado satisfactoriamente');
-            //window.location.reload();
-        }).catch(error => {
-            console.log(error.response)
-        });
-        
-        //props.handleSubmit();
+        }
     }
     /**
      * Funcion que valida el formato numerico de los campos 'mesa' y 'valor' del registro de venta

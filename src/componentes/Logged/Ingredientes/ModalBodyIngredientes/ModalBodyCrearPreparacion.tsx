@@ -94,11 +94,8 @@ const ModalBodyCrearPreparacion: React.FC<modalBodyFormProps> = (props: modalBod
     const obtenerInfoIngrediente = async () => {
         await axios.get('https://inventario-services.herokuapp.com/invservice/stock/getname?nombre=' + prepIngrediente, config)
         .then(result => {
-            console.log(result);
-            //Error al cargar el valor
             setIngredienteCodigo(result.data.codigo);
             setIngEncontrado(true);
-            console.log(ingredienteCodigo);
         }).catch(result => {
             console.log('error');
             toast.error('No se reconoce el ingrediente. Por favor intente de nuevo.');
