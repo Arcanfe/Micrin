@@ -56,9 +56,7 @@ const ModalBodyPlatos: React.FC<modalBodyFormProps> = (props: modalBodyFormProps
                 console.log(error.response);
                 toast.error('Ya existe un plato con este nombre.');
                 setPlatoNombre('');
-            });
-            
-            
+            }); 
         }
     }
 
@@ -69,7 +67,7 @@ const ModalBodyPlatos: React.FC<modalBodyFormProps> = (props: modalBodyFormProps
             .then(res => {
                 console.log('creacion plato');
                 console.log(res);
-                toast.success('El plato se ha creado satisfactoriamente');
+                toast.success('El plato se ha modificado satisfactoriamente. Por favor recarga la página para ver los cambios.');
                 //window.location.reload();
             }).catch(error => {
                 console.log(error.response)

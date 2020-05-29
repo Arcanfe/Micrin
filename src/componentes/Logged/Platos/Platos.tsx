@@ -84,7 +84,7 @@ const Platos: React.FC<formProps> = (props: formProps) => {
         .then(res => {
             console.log(res);
             window.location.reload();
-            toast.info('se ha eliminado el plato');
+            toast.info('Se ha eliminado el plato exitosamente. Por favor recarga la página para ver los cambios.');
         }).catch(error => {
             console.log(error.response);
         });

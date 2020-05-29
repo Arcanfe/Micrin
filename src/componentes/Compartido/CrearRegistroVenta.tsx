@@ -10,7 +10,7 @@ async function crearRegistroVenta(e:any, valorRV:any, fechaRV:any, mesaRV:any){
     try{
         const varId = await obtenerIdLocal(e);
         const regVent = axios.post('https://inventario-services.herokuapp.com/invservice/registro_venta/registro',  JSON.parse('{"precio_total":' + valorRV + ', "numero_mesa":' + mesaRV + ', "fecha":"' + fechaRV + '", "cod_local":"' + varId + '"}'), e )
-        toast.success('El registro se ha creado satisfactoriamente');
+        toast.success('El registro se ha creado satisfactoriamente. Por favor regarga la página para ver los cambios.');
         return (await regVent).data;
     }
     catch(error){
