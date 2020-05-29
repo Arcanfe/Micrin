@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation} from 'react-router-dom';
 import { Menu, Button, Input } from 'semantic-ui-react';
 import { Modal } from 'react-bootstrap'; 
+import axios from 'axios';
 
 import Home from './Home/Home';
 import Ingredientes from './Ingredientes/Ingredientes';
@@ -9,6 +10,8 @@ import Platos from './Platos/Platos';
 import RegistroVenta from './RegistroVenta/RegistroVenta';
 import PrecioMercado from  './PrecioMercado/PrecioMercado';
 import PropTypes from 'prop-types';
+import { toast } from 'react-toastify';
+import validadorNit from '../Compartido/ValidadorNit';
 
 /**
  * Funcion que almacena las páginas de contenido de la aplicación.
@@ -18,8 +21,14 @@ import PropTypes from 'prop-types';
 const Logged: React.FC<{}> = () => {
 
     const location = useLocation();
-    const [open, setOpen] = useState(false);  
+    const [open, setOpen] = useState(false);
+    const [eliminado, setEliminado] = useState(false);  
     const [pagina, setPagina] = useState('Home');
+    const [nit, setNit] = useState('');
+
+    const config = {
+        headers: location.state
+    }
 
     useEffect(() => {
             console.log(location.state);
@@ -51,6 +60,36 @@ const Logged: React.FC<{}> = () => {
 
     const paginaMercado = () => {
         setPagina('Market');
+    }
+
+    const actualizarNit = (e: any) => {
+        setNit(e.target.value);
+    }
+    const eliminarCuenta = () => {
+        try{
+            if(validadorNit(nit) === true){
+                console.log(config);
+                axios.post('https://micrin-login-service.herokuapp.com/delete?nit=' + nit,'', config)
+                .then(() => {
+                    setOpen(false);
+                    setEliminado(true);
+                })
+                .catch(() => {
+                    toast.error('Un error inesperado ha surgido, por favor intente más tarde.');
+                });
+            }
+            else{
+                toast.error('Por favor, ingrese un NIT válido.');
+                setNit('');
+            }
+                
+        }
+        catch(error){
+            console.log(error);
+            toast.error('Un error inesperado ha surgido, por favor intente más tarde.');
+            setNit('');
+        }
+        
     }
 
     return(
@@ -120,15 +159,49 @@ const Logged: React.FC<{}> = () => {
                 <Modal.Body>
                     ¿Está seguro que desea eliminar su cuenta?
                     Para confirmar, por favor ingrese el NIT de su local en el siguiente espacio:
-                    <Input placeholder='NIT'/>
+                    <Input placeholder='NIT' onChange={actualizarNit} value={nit}/>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={handleClose}>
+                    <Button variant="secondary" onClick={eliminarCuenta}>
                         Eliminar
                     </Button>
                     <Button variant="secondary" onClick={handleClose}>
                         Cancelar
                     </Button>
+                </Modal.Footer>
+            </Modal>
+            <Modal show={open} onHide={handleClose}>
+                <Modal.Header closeButton>
+                <Modal.Title>Eliminar cuenta</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    ¿Está seguro que desea eliminar su cuenta?
+                    Para confirmar, por favor ingrese el NIT de su local en el siguiente espacio:
+                    <Input placeholder='NIT' onChange={actualizarNit} value={nit}/>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={eliminarCuenta}>
+                        Eliminar
+                    </Button>
+                    <Button variant="secondary" onClick={handleClose}>
+                        Cancelar
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+            
+            <Modal show={eliminado}>
+                <Modal.Header closeButton>
+                <Modal.Title>Eliminar cuenta</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    Su cuenta ha sido eliminada con éxito.
+                </Modal.Body>
+                <Modal.Footer>
+                    <Link to='/'>
+                        <Button variant="secondary">
+                            Continuar
+                        </Button>
+                    </Link>
                 </Modal.Footer>
             </Modal>
         </div>

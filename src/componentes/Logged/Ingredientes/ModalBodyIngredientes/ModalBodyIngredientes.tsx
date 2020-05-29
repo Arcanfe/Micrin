@@ -144,12 +144,6 @@ const ModalBodyIngredientes: React.FC<modalBodyFormProps> = (props: modalBodyFor
             ); 
     }
     /**
-     * Funcion que crea una nueva unidad de medida
-     */
-    const addUnMedida = () => {
-        axios.post('https://inventario-services.herokuapp.com/invservice/unidadmedida/registro', JSON.parse('{"unidad_medida":"' + unidadMedida + '", "cantidad":"' + unidadMedidaCant + '"}'), config);
-    }
-    /**
      * Funcion para crear un nuevo ingrediente
      */
     const createIngredient = async () => {
@@ -165,6 +159,7 @@ const ModalBodyIngredientes: React.FC<modalBodyFormProps> = (props: modalBodyFor
                 codigoUm = await buscarCodigoUnidadMedida(config, unidadMedida, unidadMedidaCant);
             }
             if(validarCampos() === true){
+                console.log(config);
                 axios.post('https://inventario-services.herokuapp.com/invservice/stock/registro',  JSON.parse('{"nombre":"' + ingredienteNombre + '", "cantidad_total":"' + ingredienteCant + '", "existencia_maxima":"' + ingredienteMax + '", "existencia_minima":"' + ingredienteMin + '", "preparacion":' + ingredientePrep + ', "cod_local":"' + varId + '", "cod_umedida":"' + codigoUm + '"}'), config )
                 .then(res => {
                     toast.success('El ingrediente se ha creado satisfactoriamente. Por favor recargue la pagina para ver los cambios.');
@@ -195,15 +190,18 @@ const ModalBodyIngredientes: React.FC<modalBodyFormProps> = (props: modalBodyFor
                 codigoUm = await buscarCodigoUnidadMedida(config, unidadMedida, unidadMedidaCant);
             }
             if(validarCampos() === true){
-                axios.put('https://inventario-services.herokuapp.com/invservice/stock/update',  JSON.parse('{"nombre":"' + ingredienteNombre + '", "cantidad_total":"' + ingredienteCant + '", "existencia_maxima":"' + ingredienteMax + '", "existencia_minima":"' + ingredienteMin + '", "preparacion":' + ingredientePrep + ', "cod_local":"' + varId + '", "cod_umedida":"' + codigoUm + '"}'), config )
+                //En fallo
+                axios.post('https://inventario-services.herokuapp.com/invservice/stock/update',  JSON.parse('{"nombre":"' + ingredienteNombre + '", "cantidad_total":' + ingredienteCant + ', "existencia_maxima":' + ingredienteMax + ', "existencia_minima":' + ingredienteMin + ', "preparacion":' + ingredientePrep + ', "cod_local":' + varId + ', "cod_umedida":' + codigoUm + '}'), config )
                 .then(res => {
                     toast.success('El ingrediente se ha actualizados satisfactoriamente. Por favor recargue la pagina para ver los cambios.');
-                    //window.location.reload();
+                    props.handleSubmit();
                 }).catch(error => {
-                    console.log(error.response)
+                    toast.error('Un error inesperado ha surgido. Por favor, intenta mas tarde.');
+                    console.log(error.response);
+                    console.log(error);
                 });
                 
-                props.handleSubmit();
+                
             }
         }
         catch(error){

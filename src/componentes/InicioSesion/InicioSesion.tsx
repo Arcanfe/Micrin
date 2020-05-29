@@ -31,19 +31,32 @@ const InicioSesion: React.FC<{}> = () => {
         });
     }
 
-    const sendInfo = () => {
-        axios.post('https://micrin-login-service.herokuapp.com/login',  JSON.parse('{"nombre":"' + userLogin.nombre + '", "password":"' + userLogin.password + '"}') )
-        .then(res => {
-            console.log(res);
-            console.log(res.data.Authorization);
-            setAuthorizarion(res.data.Authorization);
-            setLog(false);        
-            handleOpen();
-        }).catch(error => {
-            cleanFields();
-            toast.error('Usuario o contraseña erróneos por favor intentar de nuevo.');
-            console.log(error.response)
-        });
+    const sendInfo = async () => {
+        try{
+            const logPoss = await axios.get('https://micrin-login-service.herokuapp.com/validate_user?nombre=' + userLogin.nombre);
+            console.log(logPoss);
+            if(logPoss.status === 200){
+                axios.post('https://micrin-login-service.herokuapp.com/login',  JSON.parse('{"nombre":"' + userLogin.nombre + '", "password":"' + userLogin.password + '"}') )
+                .then(res => {
+                    //console.log(res);
+                    setAuthorizarion(res.data.Authorization);
+                    setLog(false);        
+                    handleOpen();
+                }).catch(error => {
+                    cleanFields();
+                    toast.error('Usuario o contraseña erróneos por favor intentar de nuevo.');
+                    console.log(error.response)
+                });
+            }
+            else{
+                toast.error(logPoss.data);
+                cleanFields();
+            }
+        }
+        catch(error){
+            console.log(error);
+            toast.error('Su cuenta no se encuentra en el sistema. En caso de tener una, por favor asegurarse que ha verificado su correo antes de ingresar.');
+        }
     }
 
     const handleOpen = () => {
