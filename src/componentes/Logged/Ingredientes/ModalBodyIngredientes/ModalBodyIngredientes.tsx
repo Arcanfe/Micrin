@@ -163,10 +163,13 @@ const ModalBodyIngredientes: React.FC<modalBodyFormProps> = (props: modalBodyFor
                 axios.post('https://inventario-services.herokuapp.com/invservice/stock/registro',  JSON.parse('{"nombre":"' + ingredienteNombre + '", "cantidad_total":"' + ingredienteCant + '", "existencia_maxima":"' + ingredienteMax + '", "existencia_minima":"' + ingredienteMin + '", "preparacion":' + ingredientePrep + ', "cod_local":"' + varId + '", "cod_umedida":"' + codigoUm + '"}'), config )
                 .then(res => {
                     toast.success('El ingrediente se ha creado satisfactoriamente. Por favor recargue la pagina para ver los cambios.');
+                    props.handleSubmit();
                 }).catch(error => {
-                    console.log(error.response)
+                    console.log(error.response);
+                    toast.error('Un ingrediente con ese nombre ya existe en tu inventario.');
+                    setIngredienteNombre('');
                 });              
-                props.handleSubmit();
+                
             }
         }
         catch(error){

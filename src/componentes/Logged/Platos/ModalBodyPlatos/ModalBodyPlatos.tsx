@@ -50,13 +50,15 @@ const ModalBodyPlatos: React.FC<modalBodyFormProps> = (props: modalBodyFormProps
             .then(res => {
                 console.log('creacion plato');
                 console.log(res);
-                toast.success('El plato se ha creado satisfactoriamente');
-                //window.location.reload();
+                toast.success('El plato se ha creado satisfactoriamente. Por favor recarga la página para ver los cambios.');
+                props.handleSubmit();
             }).catch(error => {
-                console.log(error.response)
+                console.log(error.response);
+                toast.error('Ya existe un plato con este nombre.');
+                setPlatoNombre('');
             });
             
-            props.handleSubmit();
+            
         }
     }
 
