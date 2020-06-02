@@ -21,8 +21,9 @@ const Home: React.FC<formProps> = (props: formProps) => {
         <div>
             <Container raised >
                 <h1>
-                    Bienvenidos a Mincrin.
+                    Bienvenidos a Micrin.
                 </h1>
+                <br />
             </Container>
             <Predicciones tok={props.pase} />
         </div>

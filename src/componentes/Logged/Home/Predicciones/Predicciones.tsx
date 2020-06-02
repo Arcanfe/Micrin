@@ -13,7 +13,8 @@ type modalBodyFormProps = {
  */
 const Predicciones: React.FC<modalBodyFormProps> = (props: modalBodyFormProps) => {
 
-    const[predicciones, setPredicciones] = useState<any[]>([]);
+    const [predicciones, setPredicciones] = useState<any[]>([]);
+    const [plato, setPlato] = useState('');
 
     useEffect(() => {
         getPredicciones();
@@ -36,20 +37,31 @@ const Predicciones: React.FC<modalBodyFormProps> = (props: modalBodyFormProps) =
        }
     }
 
+    const mostrarDetalles = () => {
+        
+    }
+
     return(
         <Container>
             <Segment textAlign='left'>
-                <h5>
+                <h4>
                     Las predicciones para el día de hoy son:
-                </h5>
+                </h4>
                 <p>Recuerda que a medida que se van realizando los registros de venta, nuestro algoritmo va afinando y creando predicciones para ti.</p>
                 <List bulleted>
                     {predicciones.map(pr => (
-                        <List.Item > {pr.cantidad} - {pr.nombre_plato}</List.Item>
+                        <a onClick={mostrarDetalles}> + {pr.cantidad} -> {pr.nombre_plato}</a>
                     ))}
              
                 </List>
                 <p>*Recuerda que la lista mostrada anteriormente es una predicción basada en el resultado de ventas realizadas con anterioridad. No se tiene la certeza del 100% que van a ocurrir. Por favor maneje con cautela los platos a preparar.</p>
+            </Segment>
+            <br />
+            <Segment textAlign='left'>
+                <h4>Detalles para preparar {plato}</h4>
+                <p color='red'>Mensaje en rojo</p>
+                <p color='green'>Mensaje en verde</p>
+                <p>*Recuerda que aquellos productos de color rojo, indica que no existen suficientes ingredientes para realizar todos los platos previstos.</p>
             </Segment>
         </Container>
     );

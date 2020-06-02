@@ -276,6 +276,8 @@ const ModalBodyRegistroVenta: React.FC<modalBodyFormProps> = (props: modalBodyFo
         <div>
             <Container>
                 <Grid columns={2} divided>
+                    <p> </p>
+                    <h5>Detalles del registro</h5>
                     <Grid.Row>
                         <Grid.Column>
                             <label>Fecha:</label>
@@ -292,6 +294,9 @@ const ModalBodyRegistroVenta: React.FC<modalBodyFormProps> = (props: modalBodyFo
                             <Input placeholder={props.typeOperation === 'Crear'? 'Mesa' : regVentMesa} disabled={props.typeOperation === 'Ver'} onChange={actualizarRegistroVentaMesa} value={regVentMesa}/>
                         </Grid.Column>
                     </Grid.Row>
+                    <hr />
+                    <h5>Ingreso de platos</h5>
+                    <h5>Lo siguiente se debe de mostrar solo cuando se vea</h5>
                     <Grid.Row>
                         <Grid.Column>
                             <label>Valor a pagar:</label>

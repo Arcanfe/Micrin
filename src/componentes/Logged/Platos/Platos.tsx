@@ -83,7 +83,6 @@ const Platos: React.FC<formProps> = (props: formProps) => {
         axios.post('https://inventario-services.herokuapp.com/invservice/plato/delet?codigo=' + selectObj, '', config)
         .then(res => {
             console.log(res);
-            window.location.reload();
             toast.info('Se ha eliminado el plato exitosamente. Por favor recarga la página para ver los cambios.');
         }).catch(error => {
             console.log(error.response);

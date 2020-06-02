@@ -257,6 +257,8 @@ const ModalBodyIngredientes: React.FC<modalBodyFormProps> = (props: modalBodyFor
             
             <Container>
                 <Grid columns={2} divided>
+                    <p> </p>
+                    <h5>Datos del ingrediente</h5>
                     <Grid.Row>
                         <Grid.Column>
                             <label>Nombre ingrediente:</label>
@@ -267,7 +269,7 @@ const ModalBodyIngredientes: React.FC<modalBodyFormProps> = (props: modalBodyFor
                     </Grid.Row>
                     <Grid.Row>
                         <Grid.Column>
-                            <label>Cantidad total:</label>
+                            <label>Existencia actual:</label>
                         </Grid.Column>
                         <Grid.Column>
                             <Input placeholder={props.typeOperation === 'Crear'? 'Existencia actual' : ingredienteCant} disabled={props.typeOperation === 'Ver'} onChange={actualizarIngredienteCant} value={ingredienteCant}/>
@@ -289,6 +291,8 @@ const ModalBodyIngredientes: React.FC<modalBodyFormProps> = (props: modalBodyFor
                             <Input placeholder={props.typeOperation === 'Crear'? 'Existencia máxima' : ingredienteMax} disabled={props.typeOperation === 'Ver'} onChange={actualizarIngredienteMax} value={ingredienteMax}/>
                         </Grid.Column>
                     </Grid.Row>
+                    <hr />
+                    <h5>Medición del ingrediente</h5>
                     <Grid.Row>
                         <Grid.Column>
                             <label>Unidad de medida:</label>
