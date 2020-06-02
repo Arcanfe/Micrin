@@ -80,7 +80,7 @@ const Platos: React.FC<formProps> = (props: formProps) => {
 
     const handleDeleteFinally = (e:any) => {
         // Operacion de delete
-        axios.delete('https://inventario-services.herokuapp.com/invservice/plato/delet?codigo=' + selectObj, config)
+        axios.post('https://inventario-services.herokuapp.com/invservice/plato/delet?codigo=' + selectObj, '', config)
         .then(res => {
             console.log(res);
             window.location.reload();

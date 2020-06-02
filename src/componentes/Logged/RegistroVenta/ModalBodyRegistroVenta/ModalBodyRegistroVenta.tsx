@@ -78,6 +78,10 @@ const ModalBodyRegistroVenta: React.FC<modalBodyFormProps> = (props: modalBodyFo
      */
     let rvCodigo = '';
 
+    let fecha = new Date();
+
+    const fechaActual = (fecha.getFullYear() + '-' + (fecha.getMonth() + 1) + '-' + fecha.getDate());
+
     /**
      * Funcion que inicializa el componente.
      * En caso que la operacion sea ver un registro de venta, se carga la informacion del registro
@@ -176,7 +180,7 @@ const ModalBodyRegistroVenta: React.FC<modalBodyFormProps> = (props: modalBodyFo
                 let platoEncontrado = await encontrarPlato(config, rvPlato);
                 if(platoEncontrado === true){  
                     if(agregadoMin === false){
-                        rvCodigo = await crearRegistroVenta(config, regVentValor, regVentFecha, regVentMesa);
+                        rvCodigo = await crearRegistroVenta(config, fechaActual, regVentFecha, regVentMesa);
                         setAgregadoMin(true);
                     }
                     platoCodigo = await obtenerCodigoPlato(config, rvPlato);
@@ -277,7 +281,7 @@ const ModalBodyRegistroVenta: React.FC<modalBodyFormProps> = (props: modalBodyFo
                             <label>Fecha:</label>
                         </Grid.Column>
                         <Grid.Column>
-                            <Input placeholder={props.typeOperation === 'Crear'? 'Fecha' : regVentFecha} disabled={props.typeOperation === 'Ver'} onChange={actualizarRegistroVentaFecha} value={regVentFecha}/>
+                            <Input placeholder={props.typeOperation === 'Crear'? 'Fecha' : regVentFecha} disabled onChange={actualizarRegistroVentaFecha} value={props.typeOperation === 'Ver'? regVentFecha:fechaActual}/>
                         </Grid.Column>
                     </Grid.Row>
                     <Grid.Row>

@@ -63,7 +63,7 @@ const ModalBodyPlatos: React.FC<modalBodyFormProps> = (props: modalBodyFormProps
     const updatePlato = async () => {
         const varId = await obtenerIdLocal(config);
         if(validarCampos() === true){
-            axios.put('https://inventario-services.herokuapp.com/invservice/plato/update',  JSON.parse('{"nombre":"' + platoNombre + '", "costo":"' + platoValor + '", "cod_local":"' + varId + '"}'), config )
+            axios.post('https://inventario-services.herokuapp.com/invservice/plato/update',  JSON.parse('{"nombre":"' + platoNombre + '", "costo":"' + platoValor + '", "cod_local":"' + varId + '"}'), config )
             .then(res => {
                 console.log('creacion plato');
                 console.log(res);

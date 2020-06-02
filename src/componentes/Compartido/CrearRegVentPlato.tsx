@@ -9,6 +9,7 @@ import { toast } from 'react-toastify';
 async function crearRegVentPlato(e:any, rvCodigo:any, platoCodigo:any, cantidad:any){
     try{
         const regVentPlato = await axios.post('https://inventario-services.herokuapp.com/invservice/rv_plato/registro', JSON.parse('{"cod_rv":"' + rvCodigo + '", "cod_plato":"' + platoCodigo + '", "cantidad":"' + cantidad + '"}'), e)
+        console.log(regVentPlato);
         if(regVentPlato.status === 301){
             toast.info('Atención. Un ingrediente ha llegado a agotarse (0 de cantidad).');
         }

@@ -270,7 +270,7 @@ const ModalBodyIngredientes: React.FC<modalBodyFormProps> = (props: modalBodyFor
                             <label>Cantidad total:</label>
                         </Grid.Column>
                         <Grid.Column>
-                            <Input placeholder={props.typeOperation === 'Crear'? 'Cantidad actual' : ingredienteCant} disabled={props.typeOperation === 'Ver'} onChange={actualizarIngredienteCant} value={ingredienteCant}/>
+                            <Input placeholder={props.typeOperation === 'Crear'? 'Existencia actual' : ingredienteCant} disabled={props.typeOperation === 'Ver'} onChange={actualizarIngredienteCant} value={ingredienteCant}/>
                         </Grid.Column>
                     </Grid.Row>
                     <Grid.Row>

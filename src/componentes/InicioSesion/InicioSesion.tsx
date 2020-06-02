@@ -38,7 +38,7 @@ const InicioSesion: React.FC<{}> = () => {
             if(logPoss.status === 200){
                 axios.post('https://micrin-login-service.herokuapp.com/login',  JSON.parse('{"nombre":"' + userLogin.nombre + '", "password":"' + userLogin.password + '"}') )
                 .then(res => {
-                    //console.log(res);
+                    console.log(res);
                     setAuthorizarion(res.data.Authorization);
                     setLog(false);        
                     handleOpen();

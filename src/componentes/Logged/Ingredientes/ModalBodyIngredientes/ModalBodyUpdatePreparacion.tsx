@@ -67,7 +67,7 @@ const ModalBodyUpdatePreparacion: React.FC<modalBodyFormProps> = (props: modalBo
      */
     const handleEliminatePrep = (e:any) => {
         //Falta poner la url correcta
-        axios.delete('https://inventario-services.herokuapp.com/invservice/preparacion/delet?codigo=' + e, config)
+        axios.post('https://inventario-services.herokuapp.com/invservice/preparacion/delet?codigo=' + e, '', config)
         .then(res => {
             console.log(res);
             toast.success('Se ha eliminado el ingrediente de la preparación.');

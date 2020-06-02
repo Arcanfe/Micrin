@@ -148,13 +148,15 @@ const Ingredientes: React.FC<formProps> = (props: formProps) => {
      * Función que ejecuta el borrar un ingrediente. Además acciona la función handleCloseDelete
      * @param e Código del ingrediente seleccionado
      */
-    const handleDeleteFinally = (e:any) => {
+    const handleDeleteFinally = async (e:any) => {
         // Operacion de delete
-        axios.delete('https://inventario-services.herokuapp.com/invservice/stock/delet?codigo=' + selectObj, config)
+        console.log(config);
+        await axios.post('https://inventario-services.herokuapp.com/invservice/stock/delet?codigo=' + selectObj, '', config)
         .then(res => {
             toast.info('Se ha eliminado el ingrediente. Por favor, recargue la página para ver los cambios.');
         }).catch(error => {
-            console.log(error.response);
+            console.log(error);
+            toast.error('Hay un error desconocido. Por favor intentar mas tarde.');
         });
         
         handleCloseDelete();
