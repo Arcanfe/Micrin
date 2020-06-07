@@ -11,6 +11,8 @@ import crearRegistroVenta from '../../../Compartido/CrearRegistroVenta';
 import obtenerCodigoPlato from '../../../Compartido/ObtenerCodigoPlato';
 import encontrarPlato from '../../../Compartido/EncontrarPlato';
 import crearRegVentPlato from '../../../Compartido/CrearRegVentPlato';
+import obtenerValorPlato from '../../../Compartido/ObtenerValorPlato';
+import modificarRegistroVenta from '../../../Compartido/ModificarRegistroVenta';
 
 /**
  * Objeto que contiene los parámetros/props del contenedor
@@ -35,6 +37,7 @@ const ModalBodyRegistroVenta: React.FC<modalBodyFormProps> = (props: modalBodyFo
      * Emplea el token recibido en las propiedades.
      */
     const config = {
+        credentials: 'include',
         headers: props.tok
     }
     /**
@@ -58,17 +61,23 @@ const ModalBodyRegistroVenta: React.FC<modalBodyFormProps> = (props: modalBodyFo
      */
     const[rvCantidad, setRvCantidad] = useState('');
     /**
-     * Variable booleana que define la apertura del modal para añadir un plato a un registro de venta
-     */
-    const[openCrearPlato, setOpenCrearPlato] = useState(false);
-    /**
      * Variable booleana que establece si se ha agregado el numero minimo de platos a un registro de venta para terminar un registro
      */    
-    const[agregadoMin, setAgregadoMin] = useState(false);
+    const [agregadoMin, setAgregadoMin] = useState(false);
     /**
      * Variable booleana que define si el plato escrito por el usuario existe en el sistema
      */
     const[platoEncontrado, setPlatoEncontrado] = useState(false);
+    /**
+    * Modal que abre el mensaje del valor final
+     */
+    const [valorFinal, setValorFinal] = useState(false);
+    /**
+     * Variable booleana que define la apertura del modal para añadir un plato a un registro de venta
+     */
+    const[openCrearPlato, setOpenCrearPlato] = useState(false);
+
+    const [codigoRegistro, setCodigoRegistro] = useState('0');
     /**
      * Variable que almacena el codigo del plato a partir del nombre escrito por el usuario
      */
@@ -77,6 +86,10 @@ const ModalBodyRegistroVenta: React.FC<modalBodyFormProps> = (props: modalBodyFo
      * Variable que almacena el codigo del registro de venta creado
      */
     let rvCodigo = '';
+
+    const [valorTotal, setValorTotal] = useState(0);
+
+    let platosRegVent:any = [];
 
     let fecha = new Date();
 
@@ -98,6 +111,16 @@ const ModalBodyRegistroVenta: React.FC<modalBodyFormProps> = (props: modalBodyFo
             );            
         };
     },[]);
+
+    useEffect(() => {
+        console.log(agregadoMin);
+    }, [agregadoMin]);
+
+    useEffect(() => {
+        console.log(codigoRegistro)
+        modificarRegistroVenta(config, valorTotal, codigoRegistro);
+    }, [valorTotal]);
+    
     /**
      * Función que modifica la variable regVentFecha
      * @param e Cadena string que usuario ingresa como fecha de un registro de venta
@@ -133,9 +156,24 @@ const ModalBodyRegistroVenta: React.FC<modalBodyFormProps> = (props: modalBodyFo
     const actualizarRvCantidad = (e: any) => {
         setRvCantidad(e.target.value);
     }
+
     /**
-     * Función inicializa la operacion para añadir un nuevo primer plato a un registro de venta
+     * Funcion que modifica la variable 'openCrearPlato' a true
      */
+    const handleOpenCrearPlato = () => {
+        setOpenCrearPlato(true);
+    }
+    /**
+     * Funcion que modifica la variable 'openCrearPlato' a false
+     */
+    const handleCloseCrearPlato = () => {
+        setOpenCrearPlato(false);
+    }
+
+    const confirmar = () => {
+        setValorFinal(true);
+    }
+
     const nuevoPlato = () => {
         if(validarCampos() === true){
             handleOpenCrearPlato();
@@ -151,10 +189,13 @@ const ModalBodyRegistroVenta: React.FC<modalBodyFormProps> = (props: modalBodyFo
                 let platoEncontrado = await encontrarPlato(config, rvPlato);
                 if(platoEncontrado === true){    
                     if(agregadoMin === false){
-                        rvCodigo = await crearRegistroVenta(config, regVentValor, regVentFecha, regVentMesa);
+                        rvCodigo = await crearRegistroVenta(config, fechaActual, regVentMesa);
                         setAgregadoMin(true);
                     }
                     platoCodigo = await obtenerCodigoPlato(config, rvPlato);
+                    let valorPlat = await obtenerValorPlato(config, rvPlato);
+                    let valorParcial = valorTotal
+                    setValorTotal(valorParcial + (valorPlat * parseInt(rvCantidad)));
                     crearRegVentPlato(config, rvCodigo, platoCodigo, rvCantidad);
                     setRvPlato('');
                     setRvCantidad('');
@@ -166,7 +207,6 @@ const ModalBodyRegistroVenta: React.FC<modalBodyFormProps> = (props: modalBodyFo
             }
             catch(error){
                 toast.error('Un error inesperado ha ocurrido, por favor intente mas tarde.');
-                handleCloseCrearPlato();
                 props.handleSubmit();
             }
         }   
@@ -180,13 +220,17 @@ const ModalBodyRegistroVenta: React.FC<modalBodyFormProps> = (props: modalBodyFo
                 let platoEncontrado = await encontrarPlato(config, rvPlato);
                 if(platoEncontrado === true){  
                     if(agregadoMin === false){
-                        rvCodigo = await crearRegistroVenta(config, fechaActual, regVentFecha, regVentMesa);
+                        rvCodigo = await crearRegistroVenta(config, fechaActual, regVentMesa);
+                        console.log(rvCodigo);
+                        setCodigoRegistro(rvCodigo);
                         setAgregadoMin(true);
                     }
                     platoCodigo = await obtenerCodigoPlato(config, rvPlato);
+                    let valorPlat = await obtenerValorPlato(config, rvPlato);
+                    let valorParcial = valorTotal
+                    setValorTotal(valorParcial + (valorPlat * parseInt(rvCantidad)));
                     crearRegVentPlato(config, rvCodigo, platoCodigo, rvCantidad);
-                    handleCloseCrearPlato();
-                    props.handleSubmit();
+                    confirmar();
                 }
                 else{
                     toast.error('El plato ingresado no se ha encontrado.');
@@ -195,33 +239,22 @@ const ModalBodyRegistroVenta: React.FC<modalBodyFormProps> = (props: modalBodyFo
             }
             catch(error){
                 toast.error('Un error inesperado ha ocurrido, por favor intente mas tarde.');
-                handleCloseCrearPlato();
                 props.handleSubmit();
             }
         }
     }
-    /**
+     /**
      * Funcion que valida el formato numerico de los campos 'mesa' y 'valor' del registro de venta
      * Valida ademas el formato de la fecha del registro de venta a crear.
      */
     function validarCampos(){
         if(camposLlenos()){
-            if(validadorFecha(regVentFecha)){
                 if(validadorNumero(regVentMesa)){
-                    if(validadorNumero(regVentValor)){
-                        return true;
-                    }
-                    setRegVentValor('');
-                    toast.error('El campo "valor" debe ser numérico');
-                    return false;
+                    return true;
                 }
                 setRegVentMesa('');
                 toast.error('El campo "mesa" debe ser numérico');
                 return false;
-            }
-            setRegVentFecha('');
-            toast.error('Ingrese una fecha válida. Por favor ingresar la fecha en formato "YYYY-MM-DD"');
-            return false;
         }
         toast.error('Todos los campos deben ser llenados');
         return false;
@@ -242,22 +275,10 @@ const ModalBodyRegistroVenta: React.FC<modalBodyFormProps> = (props: modalBodyFo
         return false;
     }
     /**
-     * Funcion que modifica la variable 'openCrearPlato' a true
-     */
-    const handleOpenCrearPlato = () => {
-        setOpenCrearPlato(true);
-    }
-    /**
-     * Funcion que modifica la variable 'openCrearPlato' a false
-     */
-    const handleCloseCrearPlato = () => {
-        setOpenCrearPlato(false);
-    }
-    /**
      * Funcion que valida que los campos para crear un registro de venta no esten vacios
      */
     function camposLlenos(){
-        if(regVentFecha !== '' && regVentMesa !== '' && regVentValor !== ''){
+        if(regVentMesa !== ''){
             return true;
         }
         return false;
@@ -270,6 +291,11 @@ const ModalBodyRegistroVenta: React.FC<modalBodyFormProps> = (props: modalBodyFo
             return true;
         }
         return false;
+    }
+
+    const finalizar = () => {
+        setValorFinal(false);
+        props.handleSubmit();
     }
 
     return(
@@ -291,32 +317,16 @@ const ModalBodyRegistroVenta: React.FC<modalBodyFormProps> = (props: modalBodyFo
                             <label>Mesa:</label>
                         </Grid.Column>
                         <Grid.Column>
-                            <Input placeholder={props.typeOperation === 'Crear'? 'Mesa' : regVentMesa} disabled={props.typeOperation === 'Ver'} onChange={actualizarRegistroVentaMesa} value={regVentMesa}/>
+                        <Input placeholder={props.typeOperation === 'Crear'? 'Mesa' : regVentMesa} disabled={props.typeOperation === 'Ver'} onChange={actualizarRegistroVentaMesa} value={regVentMesa}/>
                         </Grid.Column>
                     </Grid.Row>
-                    <hr />
-                    <h5>Ingreso de platos</h5>
-                    <h5>Lo siguiente se debe de mostrar solo cuando se vea</h5>
-                    <Grid.Row>
-                        <Grid.Column>
-                            <label>Valor a pagar:</label>
-                        </Grid.Column>
-                        <Grid.Column>
-                            <Input placeholder={props.typeOperation === 'Crear'? 'Valor a pagar' : regVentValor} disabled={props.typeOperation === 'Ver'} onChange={actualizarRegistroVentaValor} value={regVentValor}/>
-                        </Grid.Column>
-                    </Grid.Row>
-
                     {
-
                         props.typeOperation !== 'Crear' ? 
                         <ModalBodyVerPlatos objectS={props.objectS} llave={props.tok}></ModalBodyVerPlatos>
                         :
                         <div></div>
-
                     }
-
                 </Grid>
-
             </Container>
             <br></br>
             <Button variant="secondary" onClick={props.handleSubmit}>
@@ -370,6 +380,19 @@ const ModalBodyRegistroVenta: React.FC<modalBodyFormProps> = (props: modalBodyFo
                 </Modal.Footer>
             </Modal>
 
+            <Modal show={valorFinal} onHide={finalizar}>
+                <Modal.Header closeButton>
+                <Modal.Title>Registro de venta completado</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    El registro se ha completado. El valor total a cobrar es de {valorTotal}.
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={finalizar}>
+                        Finalizar
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </div>
     );
 }

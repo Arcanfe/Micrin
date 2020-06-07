@@ -6,10 +6,10 @@ import { toast } from 'react-toastify';
 /**
  * Funcion que permite crear un nuevo registro de venta
  */
-async function crearRegistroVenta(e:any, valorRV:any, fechaRV:any, mesaRV:any){
+async function crearRegistroVenta(e:any, fechaRV:any, mesaRV:any){
     try{
         const varId = await obtenerIdLocal(e);
-        const regVent = axios.post('https://inventario-services.herokuapp.com/invservice/registro_venta/registro',  JSON.parse('{"precio_total":' + valorRV + ', "numero_mesa":' + mesaRV + ', "fecha":"' + fechaRV + '", "cod_local":"' + varId + '"}'), e )
+        const regVent = axios.post('https://inventario-services.herokuapp.com/invservice/registro_venta/registro',  JSON.parse('{"numero_mesa":' + mesaRV + ', "fecha":"' + fechaRV + '", "cod_local":"' + varId + '"}'), e )
         toast.success('El registro se ha creado satisfactoriamente. Por favor regarga la página para ver los cambios.');
         return (await regVent).data;
     }
@@ -34,10 +34,6 @@ crearRegistroVenta.propTypes = {
      * Variable que contiene el numero de la mesa para hacer la peticion
      */
     mesaRV: PropTypes.string.isRequired,
-    /**
-     * Variable que contiene el valor/costo total del registro para hacer la peticion
-     */
-    valorRV: PropTypes.string.isRequired,
     /**
      * Variable booleana que almacena la respuesta de la peticion
      */

@@ -13,8 +13,14 @@ type modalBodyFormProps = {
  */
 const Predicciones: React.FC<modalBodyFormProps> = (props: modalBodyFormProps) => {
 
+    const config = {
+        headers: props.tok
+    }
+
     const [predicciones, setPredicciones] = useState<any[]>([]);
     const [plato, setPlato] = useState('');
+    const [impresion, setImpresion] = useState('');
+    const [stockRecetas, setStockRecetas] = useState<any[]>([]);
 
     useEffect(() => {
         getPredicciones();
@@ -22,10 +28,6 @@ const Predicciones: React.FC<modalBodyFormProps> = (props: modalBodyFormProps) =
     }, [predicciones]);
 
     const getPredicciones = async () => {
-        const config = {
-            headers: props.tok
-        }
-
         try{
             const resultado = await axios.get('https://inventario-services.herokuapp.com/invservice/analitica', config);
             console.log(resultado);
@@ -37,8 +39,28 @@ const Predicciones: React.FC<modalBodyFormProps> = (props: modalBodyFormProps) =
        }
     }
 
-    const mostrarDetalles = () => {
-        
+    const mostrarDetalles = async (e:any, f:any) => {
+        try {
+            const result = await axios.get('https://inventario-services.herokuapp.com/invservice/plato/getone/?codigo=' + f, config);
+            let data = result.data.receta
+            for(let i = 0 ; i< data.length ; i++ ) {
+                data[i].nombreIng = await getNombre(data[i].codigo_spro);
+                data[i].cantIng = await getCantidad(data[i].codigo_spro);
+            }
+            setStockRecetas(data);
+        } catch(err) {
+            console.log(err); 
+        }
+    }
+
+    const getNombre = async (e:any) => {
+        const result= await axios.get('https://inventario-services.herokuapp.com/invservice/stock/getone/?codigo=' + e, config)
+        return result.data.nombre;
+    }
+
+    const getCantidad = async (e:any) => {
+        const result= await axios.get('https://inventario-services.herokuapp.com/invservice/stock/getone/?codigo=' + e, config)
+        return result.data.cantidad_total;
     }
 
     return(
@@ -48,9 +70,10 @@ const Predicciones: React.FC<modalBodyFormProps> = (props: modalBodyFormProps) =
                     Las predicciones para el día de hoy son:
                 </h4>
                 <p>Recuerda que a medida que se van realizando los registros de venta, nuestro algoritmo va afinando y creando predicciones para ti.</p>
-                <List bulleted>
+                <p>Selecciona un plato en la lista para ver si tienes los ingredientes necesarios.</p>
+                <List>
                     {predicciones.map(pr => (
-                        <a onClick={mostrarDetalles}> + {pr.cantidad} -> {pr.nombre_plato}</a>
+                        <List.Item onClick={() => mostrarDetalles(pr.cantidad, pr.nombre_plato)} > + {pr.cantidad} -> {pr.nombre_plato}</List.Item>
                     ))}
              
                 </List>
@@ -61,6 +84,12 @@ const Predicciones: React.FC<modalBodyFormProps> = (props: modalBodyFormProps) =
                 <h4>Detalles para preparar {plato}</h4>
                 <p color='red'>Mensaje en rojo</p>
                 <p color='green'>Mensaje en verde</p>
+                {stockRecetas.map(st => (
+                    <div>
+                        Nombre del ingrediente {st.nombreIng} - Cantidad actual {st.cantIng}
+                    </div>
+                    
+                ))}
                 <p>*Recuerda que aquellos productos de color rojo, indica que no existen suficientes ingredientes para realizar todos los platos previstos.</p>
             </Segment>
         </Container>
