@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Segment, List, Label } from 'semantic-ui-react'; 
+import { Container, Segment, Button, Label } from 'semantic-ui-react'; 
 import axios from 'axios';
 import PropTypes from 'prop-types';
 
@@ -41,6 +41,7 @@ const Predicciones: React.FC<modalBodyFormProps> = (props: modalBodyFormProps) =
 
     const mostrarDetalles = async (e:any, f:any) => {
         try {
+            console.log(f);
             const result = await axios.get('https://inventario-services.herokuapp.com/invservice/plato/getPlato/?nombre=' + f, config);
             let data = result.data.receta
             for(let i = 0 ; i< data.length ; i++ ) {
@@ -77,12 +78,9 @@ const Predicciones: React.FC<modalBodyFormProps> = (props: modalBodyFormProps) =
                 </h4>
                 <p>Recuerda que a medida que se van realizando los registros de venta, nuestro algoritmo va afinando y creando predicciones para ti.</p>
                 <p>Selecciona un plato en la lista para ver si tienes los ingredientes necesarios.</p>
-                <List>
                     {predicciones.map(pr => (
-                        <List.Item onClick={() => mostrarDetalles(pr.cantidad, pr.nombre_plato)} > + {pr.cantidad_plato} -> {pr.plato} - {pr.precision}</List.Item>
+                        <Button fluid onClick={() => {mostrarDetalles(pr.cantidad, pr.nombre_plato)}} > + {pr.cantidad_plato} -> {pr.plato} - {pr.precision}</Button>
                     ))}
-             
-                </List>
                 <p>*Recuerda el ultimo valor presentado, es una predicción basada en el resultado de ventas realizadas con anterioridad. La probabilidad de certeza se indica junto al nombre.</p>
             </Segment>
             <br />
