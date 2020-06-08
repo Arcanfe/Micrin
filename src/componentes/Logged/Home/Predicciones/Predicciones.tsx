@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Segment, List } from 'semantic-ui-react'; 
+import { Container, Segment, List, Label } from 'semantic-ui-react'; 
 import axios from 'axios';
 import PropTypes from 'prop-types';
 
@@ -41,11 +41,17 @@ const Predicciones: React.FC<modalBodyFormProps> = (props: modalBodyFormProps) =
 
     const mostrarDetalles = async (e:any, f:any) => {
         try {
-            const result = await axios.get('https://inventario-services.herokuapp.com/invservice/plato/getone/?codigo=' + f, config);
+            const result = await axios.get('https://inventario-services.herokuapp.com/invservice/plato/getPlato/?nombre=' + f, config);
             let data = result.data.receta
             for(let i = 0 ; i< data.length ; i++ ) {
                 data[i].nombreIng = await getNombre(data[i].codigo_spro);
                 data[i].cantIng = await getCantidad(data[i].codigo_spro);
+                if(data[i].cantIng >= (data[i].cantidad * e)){
+                    data[i].posible = true;
+                }
+                else{
+                    data[i].posible = false;
+                }
             }
             setStockRecetas(data);
         } catch(err) {
@@ -73,22 +79,19 @@ const Predicciones: React.FC<modalBodyFormProps> = (props: modalBodyFormProps) =
                 <p>Selecciona un plato en la lista para ver si tienes los ingredientes necesarios.</p>
                 <List>
                     {predicciones.map(pr => (
-                        <List.Item onClick={() => mostrarDetalles(pr.cantidad, pr.nombre_plato)} > + {pr.cantidad} -> {pr.nombre_plato}</List.Item>
+                        <List.Item onClick={() => mostrarDetalles(pr.cantidad, pr.nombre_plato)} > + {pr.cantidad_plato} -> {pr.plato} - {pr.precision}</List.Item>
                     ))}
              
                 </List>
-                <p>*Recuerda que la lista mostrada anteriormente es una predicción basada en el resultado de ventas realizadas con anterioridad. No se tiene la certeza del 100% que van a ocurrir. Por favor maneje con cautela los platos a preparar.</p>
+                <p>*Recuerda el ultimo valor presentado, es una predicción basada en el resultado de ventas realizadas con anterioridad. La probabilidad de certeza se indica junto al nombre.</p>
             </Segment>
             <br />
             <Segment textAlign='left'>
                 <h4>Detalles para preparar {plato}</h4>
-                <p color='red'>Mensaje en rojo</p>
-                <p color='green'>Mensaje en verde</p>
                 {stockRecetas.map(st => (
-                    <div>
-                        Nombre del ingrediente {st.nombreIng} - Cantidad actual {st.cantIng}
-                    </div>
-                    
+                        <Label color={st.posible === true ? 'green' : 'red'}>
+                            Nombre del ingrediente {st.nombreIng} - Cantidad actual {st.cantIng} - {st.posible === true ? 'Es posible suplir la demanda.':'No es posible suplir la demanda.'}
+                        </Label>
                 ))}
                 <p>*Recuerda que aquellos productos de color rojo, indica que no existen suficientes ingredientes para realizar todos los platos previstos.</p>
             </Segment>
